@@ -1,0 +1,42 @@
+@Library('Shared-Library2') _
+
+pipeline {
+    agent any
+
+    stages {
+        stage('GIT_SRC_CLONE') {
+            steps {
+               git branch: 'master', url: 'https://github.com/Racheltembi/Group-project.git'
+            }
+        }
+
+        stage('MAVEN_COMPILE_PACKAGES') {
+            steps {
+                script {
+                    common ('maven_Build')
+                }
+            }
+        }
+        stage('CODE_COVERAGE') {
+            steps {
+                script {
+                    common ('sonar:sonar')
+                }
+            }
+        }
+        stage('DEPLOY_ARTIFACTS') {
+            steps {
+                script {
+                    common ('deploy')
+                }
+            }
+        }
+        stage('AUTHORISATION') {
+            steps {
+               script {
+                   common ('Authorization')
+               }
+            }
+        }
+     }
+}
